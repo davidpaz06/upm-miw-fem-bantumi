@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:    // JUEGO TERMINADO
                 finJuego();
+                return;
         }
         if (juegoBantumi.juegoTerminado()) {
             finJuego();
@@ -179,16 +180,18 @@ public class MainActivity extends AppCompatActivity {
      * El juego ha terminado. Volver a jugar?
      */
     private void finJuego() {
-        String texto = (juegoBantumi.getSemillas(6) > 6 * numInicialSemillas)
-                ? "Gana Jugador 1"
-                : "Gana Jugador 2";
+        String texto = getString(
+                (juegoBantumi.getSemillas(6) > 6 * numInicialSemillas)
+                        ? R.string.txtGanaJugador1
+                        : R.string.txtGanaJugador2
+        );
         if (juegoBantumi.getSemillas(6) == 6 * numInicialSemillas) {
-            texto = "¡¡¡ EMPATE !!!";
+            texto = getString(R.string.txtEmpate);
         }
 
         // @TODO guardar puntuación
 
         // terminar
-        new FinalAlertDialog(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");
+        FinalAlertDialog.newInstance(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");
     }
 }

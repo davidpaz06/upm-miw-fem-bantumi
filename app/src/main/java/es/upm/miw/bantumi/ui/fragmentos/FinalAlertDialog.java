@@ -14,16 +14,27 @@ import es.upm.miw.bantumi.ui.actividades.MainActivity;
 
 public class FinalAlertDialog extends DialogFragment {
 
-    private final String tituloAlertDialog;
+    private static final String ARG_TITULO = "titulo";
 
-    public FinalAlertDialog(String tituloAlertDialog) {
-        this.tituloAlertDialog = tituloAlertDialog;
+    /**
+     * Crea el diálogo guardando el título en los argumentos del fragmento,
+     * de modo que sobreviva a su recreación por el sistema (p.ej. al rotar).
+     *
+     * @param titulo título del diálogo
+     */
+    public static FinalAlertDialog newInstance(String titulo) {
+        FinalAlertDialog dialog = new FinalAlertDialog();
+        Bundle args = new Bundle();
+        args.putString(ARG_TITULO, titulo);
+        dialog.setArguments(args);
+        return dialog;
     }
 
     @NonNull
     @Override
 	public AppCompatDialog onCreateDialog(Bundle savedInstanceState) {
 		final MainActivity main = (MainActivity) requireActivity();
+        final String tituloAlertDialog = requireArguments().getString(ARG_TITULO);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(main);
         builder

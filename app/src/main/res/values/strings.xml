@@ -46,5 +46,8 @@
     <!-- Diálogo Final -->
     <string name="txtDialogoFinalTitulo">Fin del juego</string>
     <string name="txtDialogoFinalPregunta">¿Desea jugar otra partida?</string>
+    <string name="txtGanaJugador1">Gana Jugador 1</string>
+    <string name="txtGanaJugador2">Gana Jugador 2</string>
+    <string name="txtEmpate">¡¡¡ EMPATE !!!</string>
 
 </resources>
