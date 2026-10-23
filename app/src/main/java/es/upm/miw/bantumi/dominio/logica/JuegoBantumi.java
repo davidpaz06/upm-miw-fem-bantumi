@@ -12,6 +12,10 @@ public class JuegoBantumi {
     // Posiciones 7-12: campo jugador 2
     // Posición 13: depósito jugador 2
 
+    // Formato serializado: TURNO;s0,s1,...,s13
+    private static final String SEPARADOR_TURNO = ";";
+    private static final String SEPARADOR_SEMILLAS = ",";
+
     private final BantumiViewModel bantumiVM;
 
     // Turno juego
@@ -204,16 +208,48 @@ public class JuegoBantumi {
      * @return juego serializado
      */
     public String serializa() {
-        // @TODO
-        return null;
+        StringBuilder sb = new StringBuilder(turnoActual().name()).append(SEPARADOR_TURNO);
+        for (int i = 0; i < NUM_POSICIONES; i++) {
+            if (i > 0)
+                sb.append(SEPARADOR_SEMILLAS);
+            sb.append(getSemillas(i));
+        }
+        return sb.toString();
     }
 
     /**
-     * Recupera el estado del juego a partir de su representación
+     * Recupera el estado del juego a partir de su representación.
+     * Si la cadena no es válida no se modifica el estado actual.
      *
      * @param juegoSerializado cadena que representa el estado completo del juego
+     * @throws IllegalArgumentException si la cadena no tiene el formato esperado
      */
     public void deserializa(String juegoSerializado) {
-        // @TODO
+        if (juegoSerializado == null)
+            throw new IllegalArgumentException("Juego serializado nulo");
+        String[] partes = juegoSerializado.trim().split(SEPARADOR_TURNO, -1);
+        if (partes.length != 2)
+            throw new IllegalArgumentException("Formato incorrecto: " + juegoSerializado);
+        String[] valores = partes[1].split(SEPARADOR_SEMILLAS, -1);
+        if (valores.length != NUM_POSICIONES)
+            throw new IllegalArgumentException("Número de posiciones incorrecto: " + valores.length);
+
+        Turno turno;
+        int[] semillas = new int[NUM_POSICIONES];
+        try {
+            turno = Turno.valueOf(partes[0]);
+            for (int i = 0; i < NUM_POSICIONES; i++) {
+                semillas[i] = Integer.parseInt(valores[i]);
+                if (semillas[i] < 0)
+                    throw new IllegalArgumentException("Número de semillas negativo en " + i);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Número de semillas incorrecto", e);
+        }
+
+        // Todo validado: se aplica el estado
+        for (int i = 0; i < NUM_POSICIONES; i++)
+            setSemillas(i, semillas[i]);
+        setTurno(turno);
     }
 }
