@@ -14,6 +14,7 @@
 
     <!-- Opciones -->
     <string name="txtReiniciarPartida">Reiniciar</string>
+    <string name="txtReiniciarPregunta">¿Desea reiniciar la partida actual? Se perderá el progreso.</string>
     <string name="txtOpcionGuardar">Guardar Partida</string>
     <string name="txtOpcionRecuperar">Recuperar Partida</string>
     <string name="txtOpcionMejoresResultados">Mejores Resultados</string>
