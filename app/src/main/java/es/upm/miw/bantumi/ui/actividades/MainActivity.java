@@ -19,8 +19,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
 import java.util.Locale;
 
+import es.upm.miw.bantumi.datos.RepositorioPartida;
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.ReiniciarAlertDialog;
 import es.upm.miw.bantumi.R;
@@ -139,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         } else if (itemId == R.id.opcReiniciarPartida) {
             new ReiniciarAlertDialog().show(getSupportFragmentManager(), "REINICIAR_DIALOG");
+        } else if (itemId == R.id.opcGuardarPartida) {
+            guardarPartida();
         // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
             // startActivity(new Intent(this, BantumiPrefs.class));
         // @TODO!!! resto opciones
@@ -150,6 +154,21 @@ public class MainActivity extends AppCompatActivity {
             ).show();
         }
         return true;
+    }
+
+    /**
+     * Guarda el estado actual del tablero en el fichero de partida
+     */
+    private void guardarPartida() {
+        int mensaje;
+        try {
+            new RepositorioPartida(this).guardar(juegoBantumi.serializa());
+            mensaje = R.string.txtPartidaGuardada;
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error al guardar la partida", e);
+            mensaje = R.string.txtErrorGuardarPartida;
+        }
+        Snackbar.make(findViewById(android.R.id.content), getString(mensaje), Snackbar.LENGTH_LONG).show();
     }
 
     /**
