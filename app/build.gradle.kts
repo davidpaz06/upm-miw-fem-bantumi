@@ -40,6 +40,13 @@ dependencies {
     // Preferencias
     implementation(libs.androidx.preference)
 
+    // Base de datos (Room)
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+
+    // Listado de resultados
+    implementation(libs.androidx.recyclerview)
+
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel)
 
