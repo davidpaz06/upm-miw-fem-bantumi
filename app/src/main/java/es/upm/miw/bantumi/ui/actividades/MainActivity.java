@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -55,6 +56,23 @@ public class MainActivity extends AppCompatActivity {
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
         juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
         crearObservadores();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((TextView) findViewById(R.id.tvPlayer1)).setText(obtenerNombreJugador());
+    }
+
+    /**
+     * @return nombre del jugador configurado en los ajustes
+     */
+    public String obtenerNombreJugador() {
+        String nombre = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.prefKeyNombreJugador), null);
+        return (nombre == null || nombre.trim().isEmpty())
+                ? getString(R.string.txtPlayer1)
+                : nombre.trim();
     }
 
     /**
