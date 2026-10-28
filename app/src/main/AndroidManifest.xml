@@ -21,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.actividades.BantumiPrefs"
+            android:exported="false"
+            android:label="@string/preferencesText"
+            android:parentActivityName=".ui.actividades.MainActivity" />
     </application>
 
 </manifest>

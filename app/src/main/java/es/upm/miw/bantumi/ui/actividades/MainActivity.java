@@ -1,6 +1,7 @@
 package es.upm.miw.bantumi.ui.actividades;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -146,8 +147,8 @@ public class MainActivity extends AppCompatActivity {
             guardarPartida();
         } else if (itemId == R.id.opcRecuperarPartida) {
             solicitarRecuperarPartida();
-        // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
-            // startActivity(new Intent(this, BantumiPrefs.class));
+        } else if (itemId == R.id.opcAjustes) {
+            startActivity(new Intent(this, BantumiPrefs.class));
         // @TODO!!! resto opciones
         } else {
             Snackbar.make(
