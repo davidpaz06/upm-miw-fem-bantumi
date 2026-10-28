@@ -157,12 +157,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Inicia una nueva partida (turno de J1) y la marca como no modificada
+     */
+    public void reiniciarPartida() {
+        juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
+        bantumiVM.setPartidaModificada(false);
+    }
+
+    /**
      * Guarda el estado actual del tablero en el fichero de partida
      */
     private void guardarPartida() {
         int mensaje;
         try {
             new RepositorioPartida(this).guardar(juegoBantumi.serializa());
+            bantumiVM.setPartidaModificada(false);
             mensaje = R.string.txtPartidaGuardada;
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error al guardar la partida", e);
@@ -180,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         String resourceName = getResources().getResourceEntryName(v.getId()); // pXY
         int num = Integer.parseInt(resourceName.substring(resourceName.length() - 2));
         Log.i(LOG_TAG, "huecoPulsado(" + resourceName + ") num=" + num);
+        String estadoAnterior = juegoBantumi.serializa();
         switch (juegoBantumi.turnoActual()) {
             case turnoJ1:
                 Log.i(LOG_TAG, "* Juega Jugador");
@@ -192,6 +202,9 @@ public class MainActivity extends AppCompatActivity {
             default:    // JUEGO TERMINADO
                 finJuego();
                 return;
+        }
+        if (!estadoAnterior.equals(juegoBantumi.serializa())) {
+            bantumiVM.setPartidaModificada(true);
         }
         if (juegoBantumi.juegoTerminado()) {
             finJuego();

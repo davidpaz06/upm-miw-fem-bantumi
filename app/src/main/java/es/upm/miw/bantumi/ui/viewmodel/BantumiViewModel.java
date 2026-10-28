@@ -15,6 +15,9 @@ public class BantumiViewModel extends ViewModel {
 
     private MutableLiveData<JuegoBantumi.Turno> turno;
 
+    // Indica si la partida actual se ha modificado desde que se inició, guardó o recuperó
+    private boolean partidaModificada = false;
+
     public BantumiViewModel() {
         turno = new MutableLiveData<>(JuegoBantumi.Turno.turnoJ1);
         tablero = new ArrayList<>(JuegoBantumi.NUM_POSICIONES);
@@ -36,6 +39,17 @@ public class BantumiViewModel extends ViewModel {
      */
     public void setTurno(JuegoBantumi.Turno turno) {
         this.turno.setValue(turno);
+    }
+
+    /**
+     * @return <code>true</code> si la partida se ha modificado desde que se inició, guardó o recuperó
+     */
+    public boolean isPartidaModificada() {
+        return partidaModificada;
+    }
+
+    public void setPartidaModificada(boolean partidaModificada) {
+        this.partidaModificada = partidaModificada;
     }
 
     /**
