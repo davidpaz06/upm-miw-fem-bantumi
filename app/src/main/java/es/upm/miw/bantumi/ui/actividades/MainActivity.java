@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import es.upm.miw.bantumi.datos.RepositorioPartida;
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
+import es.upm.miw.bantumi.ui.fragmentos.RecuperarAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.ReiniciarAlertDialog;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.dominio.logica.JuegoBantumi;
@@ -143,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
             new ReiniciarAlertDialog().show(getSupportFragmentManager(), "REINICIAR_DIALOG");
         } else if (itemId == R.id.opcGuardarPartida) {
             guardarPartida();
+        } else if (itemId == R.id.opcRecuperarPartida) {
+            solicitarRecuperarPartida();
         // } else if (itemId == R.id.opcAjustes) { // @TODO Preferencias
             // startActivity(new Intent(this, BantumiPrefs.class));
         // @TODO!!! resto opciones
@@ -178,6 +181,45 @@ public class MainActivity extends AppCompatActivity {
             mensaje = R.string.txtErrorGuardarPartida;
         }
         Snackbar.make(findViewById(android.R.id.content), getString(mensaje), Snackbar.LENGTH_LONG).show();
+    }
+
+    /**
+     * Recupera la partida guardada, si existe. Si la partida actual se ha
+     * modificado, pide confirmación antes de sustituirla.
+     */
+    private void solicitarRecuperarPartida() {
+        if (!new RepositorioPartida(this).existe()) {
+            mostrarMensaje(R.string.txtNoHayPartidaGuardada);
+        } else if (bantumiVM.isPartidaModificada()) {
+            new RecuperarAlertDialog().show(getSupportFragmentManager(), "RECUPERAR_DIALOG");
+        } else {
+            recuperarPartida();
+        }
+    }
+
+    /**
+     * Sustituye la partida actual por la guardada en el fichero
+     */
+    public void recuperarPartida() {
+        int mensaje;
+        try {
+            String guardada = new RepositorioPartida(this).cargar();
+            if (guardada == null) {
+                mensaje = R.string.txtNoHayPartidaGuardada;
+            } else {
+                juegoBantumi.deserializa(guardada);
+                bantumiVM.setPartidaModificada(false);
+                mensaje = R.string.txtPartidaRecuperada;
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            Log.e(LOG_TAG, "Error al recuperar la partida", e);
+            mensaje = R.string.txtErrorRecuperarPartida;
+        }
+        mostrarMensaje(mensaje);
+    }
+
+    private void mostrarMensaje(int idMensaje) {
+        Snackbar.make(findViewById(android.R.id.content), getString(idMensaje), Snackbar.LENGTH_LONG).show();
     }
 
     /**
