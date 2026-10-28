@@ -37,6 +37,9 @@ dependencies {
 	
     implementation(libs.constraintLayout)
 
+    // Preferencias
+    implementation(libs.androidx.preference)
+
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel)
 

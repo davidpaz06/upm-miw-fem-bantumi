@@ -4,11 +4,13 @@ appCompatVersion = '1.8.0'
 materialVersion = '1.14.0'
 constraintLayoutVersion = '2.2.2'
 lifecycleVersion = '2.11.0'
+preferenceVersion = '1.2.1'
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompatVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 constraintLayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayoutVersion" }
+androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preferenceVersion" }
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycleVersion" }
 androidx-lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycleVersion" }
 androidx-lifecycle-livedata-core = { group = "androidx.lifecycle", name = "lifecycle-livedata-core", version.ref = "lifecycleVersion" }
