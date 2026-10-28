@@ -167,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
             guardarPartida();
         } else if (itemId == R.id.opcRecuperarPartida) {
             solicitarRecuperarPartida();
+        } else if (itemId == R.id.opcMejoresResultados) {
+            startActivity(new Intent(this, MejoresResultadosActivity.class));
         } else if (itemId == R.id.opcAjustes) {
             startActivity(new Intent(this, BantumiPrefs.class));
         // @TODO!!! resto opciones

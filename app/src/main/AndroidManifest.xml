@@ -22,6 +22,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.actividades.MejoresResultadosActivity"
+            android:exported="false"
+            android:label="@string/txtOpcionMejoresResultados"
+            android:parentActivityName=".ui.actividades.MainActivity" />
+        <activity
             android:name=".ui.actividades.BantumiPrefs"
             android:exported="false"
             android:label="@string/preferencesText"
