@@ -24,6 +24,8 @@
     <string name="txtPartidaGuardada">Partida guardada</string>
     <string name="txtErrorGuardarPartida">No se pudo guardar la partida</string>
     <string name="txtOpcionMejoresResultados">Mejores Resultados</string>
+    <string name="txtBorrarResultados">Borrar resultados</string>
+    <string name="txtBorrarResultadosPregunta">¿Desea eliminar todos los resultados guardados? Esta acción no se puede deshacer.</string>
     <string name="txtSinResultados">Aún no hay resultados guardados</string>
     <string name="txtResultadoSemillas" translatable="false">%1$d - %2$d</string>
 

@@ -19,4 +19,7 @@ public interface ResultadoDao {
      */
     @Query("SELECT * FROM resultados ORDER BY MAX(semillasJ1, semillasJ2) DESC, fecha DESC LIMIT 10")
     LiveData<List<Resultado>> mejoresResultados();
+
+    @Query("DELETE FROM resultados")
+    void borrarTodos();
 }

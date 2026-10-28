@@ -13,11 +13,20 @@ import es.upm.miw.bantumi.datos.ResultadoRepository;
 
 public class ResultadosViewModel extends AndroidViewModel {
 
+    private final ResultadoRepository repositorio;
     private final LiveData<List<Resultado>> mejoresResultados;
 
     public ResultadosViewModel(@NonNull Application application) {
         super(application);
-        mejoresResultados = new ResultadoRepository(application).getMejoresResultados();
+        repositorio = new ResultadoRepository(application);
+        mejoresResultados = repositorio.getMejoresResultados();
+    }
+
+    /**
+     * Elimina todos los resultados guardados
+     */
+    public void borrarTodos() {
+        repositorio.borrarTodos();
     }
 
     /**

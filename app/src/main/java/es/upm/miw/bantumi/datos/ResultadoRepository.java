@@ -27,6 +27,10 @@ public class ResultadoRepository {
         EJECUTOR.execute(() -> resultadoDao.insertar(resultado));
     }
 
+    public void borrarTodos() {
+        EJECUTOR.execute(resultadoDao::borrarTodos);
+    }
+
     public LiveData<List<Resultado>> getMejoresResultados() {
         return resultadoDao.mejoresResultados();
     }

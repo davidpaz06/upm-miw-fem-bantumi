@@ -1,6 +1,7 @@
 package es.upm.miw.bantumi.ui.actividades;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -17,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.ui.adaptadores.ResultadoAdapter;
+import es.upm.miw.bantumi.ui.fragmentos.BorrarResultadosAlertDialog;
 import es.upm.miw.bantumi.ui.viewmodel.ResultadosViewModel;
 
 /**
  * Muestra los diez mejores resultados
  */
 public class MejoresResultadosActivity extends AppCompatActivity {
+
+    private ResultadosViewModel resultadosVM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public class MejoresResultadosActivity extends AppCompatActivity {
         rvResultados.setAdapter(adapter);
 
         View tvSinResultados = findViewById(R.id.tvSinResultados);
-        ResultadosViewModel resultadosVM = new ViewModelProvider(this).get(ResultadosViewModel.class);
+        resultadosVM = new ViewModelProvider(this).get(ResultadosViewModel.class);
         resultadosVM.getMejoresResultados().observe(this, resultados -> {
             adapter.submitList(resultados);
             tvSinResultados.setVisibility(resultados.isEmpty() ? View.VISIBLE : View.GONE);
@@ -56,9 +60,25 @@ public class MejoresResultadosActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_resultados, menu);
+        return true;
+    }
+
+    /**
+     * Elimina todos los resultados (la lista se actualiza sola al observar la base de datos)
+     */
+    public void borrarResultados() {
+        resultadosVM.borrarTodos();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+            return true;
+        } else if (item.getItemId() == R.id.opcBorrarResultados) {
+            new BorrarResultadosAlertDialog().show(getSupportFragmentManager(), "BORRAR_DIALOG");
             return true;
         }
         return super.onOptionsItemSelected(item);
