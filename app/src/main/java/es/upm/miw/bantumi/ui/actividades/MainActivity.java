@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Locale;
 
 import es.upm.miw.bantumi.datos.RepositorioPartida;
+import es.upm.miw.bantumi.datos.Resultado;
+import es.upm.miw.bantumi.datos.ResultadoRepository;
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RecuperarAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.ReiniciarAlertDialog;
@@ -184,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
     public void reiniciarPartida() {
         juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
         bantumiVM.setPartidaModificada(false);
+        bantumiVM.setPuntuacionGuardada(false);
     }
 
     /**
@@ -228,6 +231,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 juegoBantumi.deserializa(guardada);
                 bantumiVM.setPartidaModificada(false);
+                // Una partida ya terminada se registró cuando acabó
+                bantumiVM.setPuntuacionGuardada(juegoBantumi.juegoTerminado());
                 mensaje = R.string.txtPartidaRecuperada;
             }
         } catch (IOException | IllegalArgumentException e) {
@@ -273,6 +278,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Guarda en la base de datos el resultado de la partida terminada (una sola vez por partida)
+     */
+    private void guardarPuntuacion() {
+        if (bantumiVM.isPuntuacionGuardada()) {
+            return;
+        }
+        new ResultadoRepository(this).insertar(new Resultado(
+                obtenerNombreJugador(),
+                System.currentTimeMillis(),
+                juegoBantumi.getSemillas(6),
+                juegoBantumi.getSemillas(13)
+        ));
+        bantumiVM.setPuntuacionGuardada(true);
+    }
+
+    /**
      * El juego ha terminado. Volver a jugar?
      */
     private void finJuego() {
@@ -285,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
             texto = getString(R.string.txtEmpate);
         }
 
-        // @TODO guardar puntuación
+        guardarPuntuacion();
 
         // terminar
         FinalAlertDialog.newInstance(texto).show(getSupportFragmentManager(), "ALERT_DIALOG");

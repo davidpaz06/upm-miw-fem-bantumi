@@ -18,6 +18,9 @@ public class BantumiViewModel extends ViewModel {
     // Indica si la partida actual se ha modificado desde que se inició, guardó o recuperó
     private boolean partidaModificada = false;
 
+    // Indica si el resultado de la partida terminada ya se ha guardado (evita duplicados)
+    private boolean puntuacionGuardada = false;
+
     public BantumiViewModel() {
         turno = new MutableLiveData<>(JuegoBantumi.Turno.turnoJ1);
         tablero = new ArrayList<>(JuegoBantumi.NUM_POSICIONES);
@@ -50,6 +53,14 @@ public class BantumiViewModel extends ViewModel {
 
     public void setPartidaModificada(boolean partidaModificada) {
         this.partidaModificada = partidaModificada;
+    }
+
+    public boolean isPuntuacionGuardada() {
+        return puntuacionGuardada;
+    }
+
+    public void setPuntuacionGuardada(boolean puntuacionGuardada) {
+        this.puntuacionGuardada = puntuacionGuardada;
     }
 
     /**
