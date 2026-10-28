@@ -3,7 +3,9 @@ package es.upm.miw.bantumi.datos;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,5 +25,9 @@ public class ResultadoRepository {
 
     public void insertar(@NonNull Resultado resultado) {
         EJECUTOR.execute(() -> resultadoDao.insertar(resultado));
+    }
+
+    public LiveData<List<Resultado>> getMejoresResultados() {
+        return resultadoDao.mejoresResultados();
     }
 }
