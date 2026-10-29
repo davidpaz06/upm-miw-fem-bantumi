@@ -24,7 +24,7 @@ public class JuegoBantumi {
     }
 
     // Número inicial de semillas
-    private final int numInicialSemillas;
+    private int numInicialSemillas;
 
     /**
      * <b>Constructor</b><br>
@@ -39,6 +39,16 @@ public class JuegoBantumi {
         if (campoVacio(Turno.turnoJ1) && campoVacio(Turno.turnoJ2)) { // Inicializa sólo si está vacío!!!
             inicializar(turno);
         }
+    }
+
+    /**
+     * Establece el número de semillas por casilla que se usará en el siguiente
+     * {@link #inicializar(Turno)}
+     *
+     * @param numInicialSemillas Número de semillas al inicio del juego
+     */
+    public void setNumInicialSemillas(int numInicialSemillas) {
+        this.numInicialSemillas = numInicialSemillas;
     }
 
     /**

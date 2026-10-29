@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected final String LOG_TAG = "MiW";
     public JuegoBantumi juegoBantumi;
     private BantumiViewModel bantumiVM;
-    int numInicialSemillas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +53,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Instancia el ViewModel y el juego, y asigna observadores a los huecos
-        numInicialSemillas = getResources().getInteger(R.integer.intNumInicialSemillas);
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
-        juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, numInicialSemillas);
+        juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, obtenerNumInicialSemillas());
         crearObservadores();
     }
 
@@ -75,6 +73,20 @@ public class MainActivity extends AppCompatActivity {
         return (nombre == null || nombre.trim().isEmpty())
                 ? getString(R.string.txtPlayer1)
                 : nombre.trim();
+    }
+
+    /**
+     * @return número de semillas por casilla configurado en los ajustes
+     */
+    private int obtenerNumInicialSemillas() {
+        int porDefecto = getResources().getInteger(R.integer.intNumInicialSemillas);
+        String valor = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.prefKeyNumSemillas), null);
+        try {
+            return (valor == null) ? porDefecto : Integer.parseInt(valor);
+        } catch (NumberFormatException e) {
+            return porDefecto;
+        }
     }
 
     /**
@@ -183,9 +195,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Inicia una nueva partida (turno de J1) y la marca como no modificada
+     * Inicia una nueva partida (turno de J1) con el número de semillas de los
+     * ajustes y la marca como no modificada
      */
     public void reiniciarPartida() {
+        juegoBantumi.setNumInicialSemillas(obtenerNumInicialSemillas());
         juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
         bantumiVM.setPartidaModificada(false);
         bantumiVM.setPuntuacionGuardada(false);
@@ -299,12 +313,14 @@ public class MainActivity extends AppCompatActivity {
      * El juego ha terminado. Volver a jugar?
      */
     private void finJuego() {
+        int semillasJ1 = juegoBantumi.getSemillas(6);
+        int semillasJ2 = juegoBantumi.getSemillas(13);
         String texto = getString(
-                (juegoBantumi.getSemillas(6) > 6 * numInicialSemillas)
+                (semillasJ1 > semillasJ2)
                         ? R.string.txtGanaJugador1
                         : R.string.txtGanaJugador2
         );
-        if (juegoBantumi.getSemillas(6) == 6 * numInicialSemillas) {
+        if (semillasJ1 == semillasJ2) {
             texto = getString(R.string.txtEmpate);
         }
 

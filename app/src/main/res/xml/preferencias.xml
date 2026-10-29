@@ -15,4 +15,17 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/prefTituloCategoria2">
+
+        <ListPreference
+            android:key="@string/prefKeyNumSemillas"
+            android:title="@string/prefTituloNumSemillas"
+            android:dialogTitle="@string/prefTituloNumSemillas"
+            android:entries="@array/arrNumSemillas"
+            android:entryValues="@array/arrNumSemillas"
+            android:defaultValue="4"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
