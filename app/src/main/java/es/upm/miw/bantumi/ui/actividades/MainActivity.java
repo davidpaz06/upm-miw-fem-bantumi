@@ -2,6 +2,7 @@ package es.upm.miw.bantumi.ui.actividades;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.casilla_06)).setTextColor(colorAlmacen);
         ((TextView) findViewById(R.id.casilla_13)).setTextColor(colorAlmacen);
         marcarTurno(juegoBantumi.turnoActual());
+        marcarCasillas();
     }
 
     private int obtenerColor(int idClave, String porDefecto) {
@@ -209,6 +212,38 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+        bantumiVM.getUltimaCasillaJ1().observe(this, pos -> marcarCasillas());   // Casillas elegidas
+        bantumiVM.getUltimaCasillaJ2().observe(this, pos -> marcarCasillas());
+    }
+
+    /**
+     * Resalta con un borde la última casilla elegida por cada jugador
+     */
+    private void marcarCasillas() {
+        int marcaJ1 = bantumiVM.getUltimaCasillaJ1().getValue();
+        int marcaJ2 = bantumiVM.getUltimaCasillaJ2().getValue();
+        int grosor = (int) (3 * getResources().getDisplayMetrics().density);
+        ColorStateList color = ColorStateList.valueOf(obtenerColorTurno());
+        for (int pos = 0; pos < JuegoBantumi.NUM_POSICIONES; pos++) {
+            if (pos == 6 || pos == 13) {    // Almacenes
+                continue;
+            }
+            View casilla = findViewById(idCasilla(pos));
+            if (casilla instanceof MaterialButton) {
+                MaterialButton boton = (MaterialButton) casilla;
+                boton.setStrokeColor(color);
+                boton.setStrokeWidth((pos == marcaJ1 || pos == marcaJ2) ? grosor : 0);
+            }
+        }
+    }
+
+    /**
+     * @param pos posición del tablero
+     * @return identificador de la vista de la posición (<code>casilla_XX</code>), o 0 si no existe
+     */
+    private int idCasilla(int pos) {
+        String num2digitos = String.format(Locale.getDefault(), "%02d", pos);
+        return getResources().getIdentifier("casilla_" + num2digitos, "id", getPackageName());
     }
 
     /**
@@ -245,9 +280,8 @@ public class MainActivity extends AppCompatActivity {
      * @param valor valor a mostrar
      */
     private void mostrarValor(int pos, int valor) {
-        String num2digitos = String.format(Locale.getDefault(), "%02d", pos);
         // Los identificadores de los huecos tienen el formato casilla_XX
-        int idBoton = getResources().getIdentifier("casilla_" + num2digitos, "id", getPackageName());
+        int idBoton = idCasilla(pos);
         if (0 != idBoton) {
             TextView viewHueco = findViewById(idBoton);
             viewHueco.setText(String.valueOf(valor));

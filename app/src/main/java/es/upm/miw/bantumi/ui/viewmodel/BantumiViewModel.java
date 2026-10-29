@@ -15,6 +15,10 @@ public class BantumiViewModel extends ViewModel {
 
     private MutableLiveData<JuegoBantumi.Turno> turno;
 
+    // Última casilla elegida por cada jugador (-1 si aún no ha jugado)
+    private final MutableLiveData<Integer> ultimaCasillaJ1 = new MutableLiveData<>(-1);
+    private final MutableLiveData<Integer> ultimaCasillaJ2 = new MutableLiveData<>(-1);
+
     // Indica si la partida actual se ha modificado desde que se inició, guardó o recuperó
     private boolean partidaModificada = false;
 
@@ -42,6 +46,36 @@ public class BantumiViewModel extends ViewModel {
      */
     public void setTurno(JuegoBantumi.Turno turno) {
         this.turno.setValue(turno);
+    }
+
+    public LiveData<Integer> getUltimaCasillaJ1() {
+        return ultimaCasillaJ1;
+    }
+
+    public LiveData<Integer> getUltimaCasillaJ2() {
+        return ultimaCasillaJ2;
+    }
+
+    /**
+     * Registra la casilla elegida por el jugador al que corresponde <i>turno</i>
+     *
+     * @param turno turno (jugador) que ha elegido la casilla
+     * @param pos casilla elegida
+     */
+    public void setUltimaCasilla(JuegoBantumi.Turno turno, int pos) {
+        if (turno == JuegoBantumi.Turno.turnoJ1) {
+            ultimaCasillaJ1.setValue(pos);
+        } else if (turno == JuegoBantumi.Turno.turnoJ2) {
+            ultimaCasillaJ2.setValue(pos);
+        }
+    }
+
+    /**
+     * Olvida las casillas elegidas (nueva partida o partida recuperada)
+     */
+    public void reiniciarUltimasCasillas() {
+        ultimaCasillaJ1.setValue(-1);
+        ultimaCasillaJ2.setValue(-1);
     }
 
     /**

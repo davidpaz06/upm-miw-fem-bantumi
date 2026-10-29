@@ -75,6 +75,7 @@ public class JuegoBantumi {
      * @param turno especifica el turno inicial <code>[Turno.turnoJ1 || Turno.turnoJ2]</code>
      */
     public void inicializar(Turno turno) {
+        bantumiVM.reiniciarUltimasCasillas();
         setTurno(turno);
         for (int i = 0; i < NUM_POSICIONES; i++)
             setSemillas(
@@ -99,6 +100,7 @@ public class JuegoBantumi {
         )
             return;
         Log.i("MiW", String.format("jugar(%02d)", pos));
+        bantumiVM.setUltimaCasilla(turnoActual(), pos);
 
         // Recoger semillas en posición pos
         int nSemillasHueco, numSemillas = getSemillas(pos);
@@ -258,6 +260,7 @@ public class JuegoBantumi {
         }
 
         // Todo validado: se aplica el estado
+        bantumiVM.reiniciarUltimasCasillas();
         for (int i = 0; i < NUM_POSICIONES; i++)
             setSemillas(i, semillas[i]);
         setTurno(turno);
