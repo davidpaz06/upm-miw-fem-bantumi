@@ -2,6 +2,7 @@ package es.upm.miw.bantumi.ui.actividades;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ((TextView) findViewById(R.id.tvPlayer1)).setText(obtenerNombreJugador());
+        aplicarColores();
         programarJugadaComputador();
     }
 
@@ -87,6 +89,33 @@ public class MainActivity extends AppCompatActivity {
         return (nombre == null || nombre.trim().isEmpty())
                 ? getString(R.string.txtPlayer1)
                 : nombre.trim();
+    }
+
+    /**
+     * @return color de resaltado del turno configurado en los ajustes
+     */
+    private int obtenerColorTurno() {
+        return obtenerColor(R.string.prefKeyColorTurno, "#33B5E5");
+    }
+
+    /**
+     * Aplica los colores de los ajustes (se llama al volver de la pantalla de ajustes)
+     */
+    private void aplicarColores() {
+        int colorAlmacen = obtenerColor(R.string.prefKeyColorAlmacen, "#018786");
+        ((TextView) findViewById(R.id.casilla_06)).setTextColor(colorAlmacen);
+        ((TextView) findViewById(R.id.casilla_13)).setTextColor(colorAlmacen);
+        marcarTurno(juegoBantumi.turnoActual());
+    }
+
+    private int obtenerColor(int idClave, String porDefecto) {
+        String valor = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(idClave), porDefecto);
+        try {
+            return Color.parseColor(valor);
+        } catch (IllegalArgumentException e) {
+            return Color.parseColor(porDefecto);
+        }
     }
 
     /**
@@ -193,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         switch (turnoActual) {
             case turnoJ1:
                 tvJugador1.setTextColor(getColor(R.color.white));
-                tvJugador1.setBackgroundColor(getColor(android.R.color.holo_blue_light));
+                tvJugador1.setBackgroundColor(obtenerColorTurno());
                 tvJugador2.setTextColor(getColor(R.color.black));
                 tvJugador2.setBackgroundColor(getColor(R.color.white));
                 break;
@@ -201,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 tvJugador1.setTextColor(getColor(R.color.black));
                 tvJugador1.setBackgroundColor(getColor(R.color.white));
                 tvJugador2.setTextColor(getColor(R.color.white));
-                tvJugador2.setBackgroundColor(getColor(android.R.color.holo_blue_light));
+                tvJugador2.setBackgroundColor(obtenerColorTurno());
                 break;
             default:
                 tvJugador1.setTextColor(getColor(R.color.black));

@@ -24,4 +24,36 @@
         <item>ALEATORIO</item>
     </string-array>
 
+    <!-- Color de resaltado del turno -->
+    <string-array name="arrColorTurnoEntradas">
+        <item>Azul</item>
+        <item>Verde</item>
+        <item>Naranja</item>
+        <item>Rojo</item>
+        <item>Morado</item>
+    </string-array>
+    <string-array name="arrColorTurnoValores" translatable="false">
+        <item>#33B5E5</item>
+        <item>#43A047</item>
+        <item>#F57C00</item>
+        <item>#E53935</item>
+        <item>#8E24AA</item>
+    </string-array>
+
+    <!-- Color de las semillas de los almacenes -->
+    <string-array name="arrColorAlmacenEntradas">
+        <item>Turquesa</item>
+        <item>Azul</item>
+        <item>Verde</item>
+        <item>Rojo</item>
+        <item>Morado</item>
+    </string-array>
+    <string-array name="arrColorAlmacenValores" translatable="false">
+        <item>#018786</item>
+        <item>#1565C0</item>
+        <item>#2E7D32</item>
+        <item>#C62828</item>
+        <item>#6A1B9A</item>
+    </string-array>
+
 </resources>

@@ -37,4 +37,26 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/prefTituloCategoriaColores">
+
+        <ListPreference
+            android:key="@string/prefKeyColorTurno"
+            android:title="@string/prefTituloColorTurno"
+            android:dialogTitle="@string/prefTituloColorTurno"
+            android:entries="@array/arrColorTurnoEntradas"
+            android:entryValues="@array/arrColorTurnoValores"
+            android:defaultValue="#33B5E5"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:key="@string/prefKeyColorAlmacen"
+            android:title="@string/prefTituloColorAlmacen"
+            android:dialogTitle="@string/prefTituloColorAlmacen"
+            android:entries="@array/arrColorAlmacenEntradas"
+            android:entryValues="@array/arrColorAlmacenValores"
+            android:defaultValue="#018786"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

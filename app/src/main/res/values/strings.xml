@@ -53,6 +53,11 @@
     <string name="prefTituloNumSemillas">Semillas iniciales por casilla</string>
     <string name="prefKeyJugadorInicial" translatable="false">jugador_inicial</string>
     <string name="prefTituloJugadorInicial">Jugador que empieza</string>
+    <string name="prefKeyColorTurno" translatable="false">color_turno</string>
+    <string name="prefKeyColorAlmacen" translatable="false">color_almacen</string>
+    <string name="prefTituloCategoriaColores">Colores</string>
+    <string name="prefTituloColorTurno">Color del turno</string>
+    <string name="prefTituloColorAlmacen">Color de los almacenes</string>
     <string name="prefTituloCategoria1">Datos personales</string>
     <string name="prefTituloNombreJugador">Nombre del jugador</string>
     <string name="prefTextoNombreJugador">Pulse para teclear el nombre del jugador</string>
