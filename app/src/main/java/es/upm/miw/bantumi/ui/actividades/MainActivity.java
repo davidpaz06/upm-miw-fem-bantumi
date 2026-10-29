@@ -37,6 +37,7 @@ import es.upm.miw.bantumi.datos.ResultadoRepository;
 import es.upm.miw.bantumi.ui.fragmentos.FinalAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.RecuperarAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.ReiniciarAlertDialog;
+import es.upm.miw.bantumi.ui.fragmentos.SeleccionarPartidaDialog;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.dominio.logica.JuegoBantumi;
 import es.upm.miw.bantumi.ui.viewmodel.BantumiViewModel;
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.opcGuardarPartida) {
             guardarPartida();
         } else if (itemId == R.id.opcRecuperarPartida) {
-            solicitarRecuperarPartida();
+            mostrarPartidasGuardadas();
         } else if (itemId == R.id.opcMejoresResultados) {
             startActivity(new Intent(this, MejoresResultadosActivity.class));
         } else if (itemId == R.id.opcAjustes) {
@@ -376,26 +377,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Recupera la partida guardada, si existe. Si la partida actual se ha
-     * modificado, pide confirmación antes de sustituirla.
+     * Muestra la lista de partidas guardadas para elegir cuál recuperar
      */
-    private void solicitarRecuperarPartida() {
+    private void mostrarPartidasGuardadas() {
         if (!new RepositorioPartida(this).existe()) {
             mostrarMensaje(R.string.txtNoHayPartidaGuardada);
-        } else if (bantumiVM.isPartidaModificada()) {
-            new RecuperarAlertDialog().show(getSupportFragmentManager(), "RECUPERAR_DIALOG");
         } else {
-            recuperarPartida();
+            new SeleccionarPartidaDialog().show(getSupportFragmentManager(), "SELECCIONAR_DIALOG");
+        }
+    }
+
+    /**
+     * Recupera la partida elegida. Si la partida actual se ha modificado,
+     * pide confirmación antes de sustituirla.
+     *
+     * @param nombreFichero fichero de la partida elegida
+     */
+    public void seleccionarPartida(String nombreFichero) {
+        if (bantumiVM.isPartidaModificada()) {
+            RecuperarAlertDialog.newInstance(nombreFichero).show(getSupportFragmentManager(), "RECUPERAR_DIALOG");
+        } else {
+            recuperarPartida(nombreFichero);
         }
     }
 
     /**
      * Sustituye la partida actual por la guardada en el fichero
+     *
+     * @param nombreFichero fichero de la partida a recuperar
      */
-    public void recuperarPartida() {
+    public void recuperarPartida(String nombreFichero) {
         int mensaje;
         try {
-            String guardada = new RepositorioPartida(this).cargar();
+            String guardada = new RepositorioPartida(this).cargar(nombreFichero);
             if (guardada == null) {
                 mensaje = R.string.txtNoHayPartidaGuardada;
             } else {

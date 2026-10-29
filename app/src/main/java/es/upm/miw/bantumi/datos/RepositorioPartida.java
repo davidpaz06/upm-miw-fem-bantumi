@@ -13,13 +13,36 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Persiste una única partida en un fichero del almacenamiento interno de la app
+ * Persiste las partidas guardadas, un fichero por partida, en el almacenamiento
+ * interno de la app (<code>partida_{milisegundos}.txt</code>)
  */
 public class RepositorioPartida {
 
-    static final String NOMBRE_FICHERO = "partida.txt";
+    private static final String PREFIJO = "partida_";
+    private static final String SUFIJO = ".txt";
+
+    /**
+     * Resumen de una partida guardada
+     */
+    public static class PartidaGuardada {
+        public final String nombreFichero;
+        /** Fecha y hora en que se guardó (milisegundos desde epoch) */
+        public final long fecha;
+        public final int semillasJ1;
+        public final int semillasJ2;
+
+        PartidaGuardada(String nombreFichero, long fecha, int semillasJ1, int semillasJ2) {
+            this.nombreFichero = nombreFichero;
+            this.fecha = fecha;
+            this.semillasJ1 = semillasJ1;
+            this.semillasJ2 = semillasJ2;
+        }
+    }
 
     private final Context context;
 
@@ -28,34 +51,60 @@ public class RepositorioPartida {
     }
 
     /**
-     * @return <code>true</code> si hay una partida guardada
+     * @return <code>true</code> si hay alguna partida guardada
      */
     public boolean existe() {
-        return new File(context.getFilesDir(), NOMBRE_FICHERO).isFile();
+        return !nombresFicheros().isEmpty();
     }
 
     /**
-     * Guarda la partida, sustituyendo la anterior
+     * Guarda la partida en un fichero nuevo
      *
      * @param juegoSerializado contenido de la partida (ver <code>MainActivity.guardarPartida()</code>)
      * @throws IOException si no se puede escribir el fichero
      */
     public void guardar(@NonNull String juegoSerializado) throws IOException {
+        String nombre = PREFIJO + System.currentTimeMillis() + SUFIJO;
         try (Writer writer = new OutputStreamWriter(
-                context.openFileOutput(NOMBRE_FICHERO, Context.MODE_PRIVATE),
+                context.openFileOutput(nombre, Context.MODE_PRIVATE),
                 StandardCharsets.UTF_8)) {
             writer.write(juegoSerializado);
         }
     }
 
     /**
+     * @return las partidas guardadas, de la más reciente a la más antigua
+     */
+    @NonNull
+    public List<PartidaGuardada> listar() {
+        List<PartidaGuardada> partidas = new ArrayList<>();
+        for (String nombre : nombresFicheros()) {
+            long fecha = Long.parseLong(nombre.substring(PREFIJO.length(), nombre.length() - SUFIJO.length()));
+            int semillasJ1 = -1;
+            int semillasJ2 = -1;
+            try {
+                String contenido = cargar(nombre);
+                String[] valores = contenido.split("\n")[0].split(";")[1].split(",");
+                semillasJ1 = Integer.parseInt(valores[6]);
+                semillasJ2 = Integer.parseInt(valores[13]);
+            } catch (IOException | RuntimeException e) {
+                // Fichero ilegible: se lista igualmente; fallará al recuperarlo
+            }
+            partidas.add(new PartidaGuardada(nombre, fecha, semillasJ1, semillasJ2));
+        }
+        Collections.sort(partidas, (a, b) -> Long.compare(b.fecha, a.fecha));
+        return partidas;
+    }
+
+    /**
+     * @param nombreFichero fichero de la partida (ver {@link PartidaGuardada#nombreFichero})
      * @return contenido de la partida guardada (una línea por dato), o <code>null</code> si no existe
      * @throws IOException si no se puede leer el fichero
      */
     @Nullable
-    public String cargar() throws IOException {
+    public String cargar(@NonNull String nombreFichero) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                context.openFileInput(NOMBRE_FICHERO),
+                context.openFileInput(nombreFichero),
                 StandardCharsets.UTF_8))) {
             StringBuilder contenido = new StringBuilder();
             String linea;
@@ -69,5 +118,22 @@ public class RepositorioPartida {
         } catch (FileNotFoundException e) {
             return null;
         }
+    }
+
+    private List<String> nombresFicheros() {
+        List<String> nombres = new ArrayList<>();
+        String[] ficheros = context.getFilesDir().list();
+        if (ficheros != null) {
+            for (String fichero : ficheros) {
+                if (esFicheroPartida(fichero)) {
+                    nombres.add(fichero);
+                }
+            }
+        }
+        return nombres;
+    }
+
+    private static boolean esFicheroPartida(String nombre) {
+        return nombre.matches(PREFIJO + "\\d+" + "\\.txt");
     }
 }
