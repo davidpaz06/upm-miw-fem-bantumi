@@ -31,7 +31,7 @@ public class ResultadoRepository {
         EJECUTOR.execute(resultadoDao::borrarTodos);
     }
 
-    public LiveData<List<Resultado>> getMejoresResultados() {
-        return resultadoDao.mejoresResultados();
+    public LiveData<List<Resultado>> getMejoresResultados(@NonNull String nombre, int minSemillas) {
+        return resultadoDao.mejoresResultados(nombre, minSemillas);
     }
 }

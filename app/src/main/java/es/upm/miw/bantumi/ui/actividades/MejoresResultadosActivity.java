@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.ui.adaptadores.ResultadoAdapter;
 import es.upm.miw.bantumi.ui.fragmentos.BorrarResultadosAlertDialog;
+import es.upm.miw.bantumi.ui.fragmentos.FiltroResultadosDialog;
 import es.upm.miw.bantumi.ui.viewmodel.ResultadosViewModel;
 
 /**
@@ -53,6 +54,7 @@ public class MejoresResultadosActivity extends AppCompatActivity {
 
         View tvSinResultados = findViewById(R.id.tvSinResultados);
         resultadosVM = new ViewModelProvider(this).get(ResultadosViewModel.class);
+        actualizarSubtitulo();
         resultadosVM.getMejoresResultados().observe(this, resultados -> {
             adapter.submitList(resultados);
             tvSinResultados.setVisibility(resultados.isEmpty() ? View.VISIBLE : View.GONE);
@@ -63,6 +65,56 @@ public class MejoresResultadosActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_resultados, menu);
         return true;
+    }
+
+    public String getFiltroNombre() {
+        return resultadosVM.getFiltroNombre();
+    }
+
+    public int getFiltroMinSemillas() {
+        return resultadosVM.getFiltroMinSemillas();
+    }
+
+    /**
+     * Filtra la lista por jugador y por mínimo de semillas
+     *
+     * @param nombre nombre (o parte) del jugador; vacío para todos
+     * @param minSemillas mínimo de semillas tecleado; vacío o inválido para no limitar
+     */
+    public void aplicarFiltro(String nombre, String minSemillas) {
+        int minimo = 0;
+        try {
+            minimo = Integer.parseInt(minSemillas.trim());
+        } catch (NumberFormatException e) {
+            // Sin límite
+        }
+        resultadosVM.aplicarFiltro(nombre, minimo);
+        actualizarSubtitulo();
+    }
+
+    /**
+     * Muestra en la barra el filtro activo, si lo hay
+     */
+    private void actualizarSubtitulo() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null) {
+            return;
+        }
+        if (!resultadosVM.hayFiltro()) {
+            actionBar.setSubtitle(null);
+            return;
+        }
+        StringBuilder filtro = new StringBuilder();
+        if (!resultadosVM.getFiltroNombre().isEmpty()) {
+            filtro.append(resultadosVM.getFiltroNombre());
+        }
+        if (resultadosVM.getFiltroMinSemillas() > 0) {
+            if (filtro.length() > 0) {
+                filtro.append(", ");
+            }
+            filtro.append("≥ ").append(resultadosVM.getFiltroMinSemillas());
+        }
+        actionBar.setSubtitle(getString(R.string.txtFiltroActivo, filtro));
     }
 
     /**
@@ -76,6 +128,9 @@ public class MejoresResultadosActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+            return true;
+        } else if (item.getItemId() == R.id.opcFiltrarResultados) {
+            new FiltroResultadosDialog().show(getSupportFragmentManager(), "FILTRO_DIALOG");
             return true;
         } else if (item.getItemId() == R.id.opcBorrarResultados) {
             new BorrarResultadosAlertDialog().show(getSupportFragmentManager(), "BORRAR_DIALOG");
