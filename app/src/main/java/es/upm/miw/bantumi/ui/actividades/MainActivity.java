@@ -3,6 +3,8 @@ package es.upm.miw.bantumi.ui.actividades;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,8 +39,12 @@ import es.upm.miw.bantumi.ui.viewmodel.BantumiViewModel;
 public class MainActivity extends AppCompatActivity {
 
     protected final String LOG_TAG = "MiW";
+    private static final long RETARDO_COMPUTADOR_MS = 800;
     public JuegoBantumi juegoBantumi;
     private BantumiViewModel bantumiVM;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Runnable jugadaComputador = this::juegaComputador;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Instancia el ViewModel y el juego, y asigna observadores a los huecos
         bantumiVM = new ViewModelProvider(this).get(BantumiViewModel.class);
-        juegoBantumi = new JuegoBantumi(bantumiVM, JuegoBantumi.Turno.turnoJ1, obtenerNumInicialSemillas());
+        juegoBantumi = new JuegoBantumi(bantumiVM, obtenerTurnoInicial(), obtenerNumInicialSemillas());
         crearObservadores();
     }
 
@@ -62,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ((TextView) findViewById(R.id.tvPlayer1)).setText(obtenerNombreJugador());
+        programarJugadaComputador();
+    }
+
+    @Override
+    protected void onPause() {
+        // Evita mostrar diálogos (fin de partida) con la actividad en segundo plano
+        handler.removeCallbacks(jugadaComputador);
+        super.onPause();
     }
 
     /**
@@ -86,6 +100,58 @@ public class MainActivity extends AppCompatActivity {
             return (valor == null) ? porDefecto : Integer.parseInt(valor);
         } catch (NumberFormatException e) {
             return porDefecto;
+        }
+    }
+
+    /**
+     * @return turno con el que empieza una partida, según los ajustes
+     */
+    private JuegoBantumi.Turno obtenerTurnoInicial() {
+        String valor = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.prefKeyJugadorInicial), "J1");
+        if ("ALEATORIO".equals(valor)) {
+            return (Math.random() < 0.5) ? JuegoBantumi.Turno.turnoJ1 : JuegoBantumi.Turno.turnoJ2;
+        }
+        return "J2".equals(valor) ? JuegoBantumi.Turno.turnoJ2 : JuegoBantumi.Turno.turnoJ1;
+    }
+
+    /**
+     * Si es el turno del computador, programa su jugada tras una breve pausa
+     */
+    private void programarJugadaComputador() {
+        handler.removeCallbacks(jugadaComputador);
+        if (juegoBantumi.turnoActual() == JuegoBantumi.Turno.turnoJ2) {
+            handler.postDelayed(jugadaComputador, RETARDO_COMPUTADOR_MS);
+        }
+    }
+
+    /**
+     * Realiza la jugada del computador (y las que encadene si repite turno)
+     */
+    private void juegaComputador() {
+        if (juegoBantumi.turnoActual() != JuegoBantumi.Turno.turnoJ2) {
+            return;
+        }
+        Log.i(LOG_TAG, "* Juega Computador");
+        String estadoAnterior = juegoBantumi.serializa();
+        juegoBantumi.juegaComputador();
+        trasJugada(estadoAnterior);
+    }
+
+    /**
+     * Actualiza el estado de la partida tras una jugada: la marca como modificada,
+     * comprueba si ha terminado y, si no, da paso al computador cuando le toque.
+     *
+     * @param estadoAnterior estado serializado antes de la jugada
+     */
+    private void trasJugada(String estadoAnterior) {
+        if (!estadoAnterior.equals(juegoBantumi.serializa())) {
+            bantumiVM.setPartidaModificada(true);
+        }
+        if (juegoBantumi.juegoTerminado()) {
+            finJuego();
+        } else {
+            programarJugadaComputador();
         }
     }
 
@@ -195,14 +261,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Inicia una nueva partida (turno de J1) con el número de semillas de los
-     * ajustes y la marca como no modificada
+     * Inicia una nueva partida con el número de semillas y el jugador inicial
+     * de los ajustes, y la marca como no modificada
      */
     public void reiniciarPartida() {
         juegoBantumi.setNumInicialSemillas(obtenerNumInicialSemillas());
-        juegoBantumi.inicializar(JuegoBantumi.Turno.turnoJ1);
+        juegoBantumi.inicializar(obtenerTurnoInicial());
         bantumiVM.setPartidaModificada(false);
         bantumiVM.setPuntuacionGuardada(false);
+        programarJugadaComputador();
     }
 
     /**
@@ -249,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
                 bantumiVM.setPartidaModificada(false);
                 // Una partida ya terminada se registró cuando acabó
                 bantumiVM.setPuntuacionGuardada(juegoBantumi.juegoTerminado());
+                programarJugadaComputador();
                 mensaje = R.string.txtPartidaRecuperada;
             }
         } catch (IOException | IllegalArgumentException e) {
@@ -271,25 +339,19 @@ public class MainActivity extends AppCompatActivity {
         String resourceName = getResources().getResourceEntryName(v.getId()); // pXY
         int num = Integer.parseInt(resourceName.substring(resourceName.length() - 2));
         Log.i(LOG_TAG, "huecoPulsado(" + resourceName + ") num=" + num);
-        String estadoAnterior = juegoBantumi.serializa();
         switch (juegoBantumi.turnoActual()) {
             case turnoJ1:
                 Log.i(LOG_TAG, "* Juega Jugador");
+                String estadoAnterior = juegoBantumi.serializa();
                 juegoBantumi.jugar(num);
+                trasJugada(estadoAnterior);
                 break;
             case turnoJ2:
-                Log.i(LOG_TAG, "* Juega Computador");
-                juegoBantumi.juegaComputador();
+                // Turno del computador: adelanta su jugada, que ya estaba programada
+                juegaComputador();
                 break;
             default:    // JUEGO TERMINADO
                 finJuego();
-                return;
-        }
-        if (!estadoAnterior.equals(juegoBantumi.serializa())) {
-            bantumiVM.setPartidaModificada(true);
-        }
-        if (juegoBantumi.juegoTerminado()) {
-            finJuego();
         }
     }
 

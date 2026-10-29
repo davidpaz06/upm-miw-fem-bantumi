@@ -26,6 +26,15 @@
             android:defaultValue="4"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            android:key="@string/prefKeyJugadorInicial"
+            android:title="@string/prefTituloJugadorInicial"
+            android:dialogTitle="@string/prefTituloJugadorInicial"
+            android:entries="@array/arrJugadorInicialEntradas"
+            android:entryValues="@array/arrJugadorInicialValores"
+            android:defaultValue="J1"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -12,4 +12,16 @@
         <item>8</item>
     </string-array>
 
+    <!-- Jugador que realiza el primer movimiento -->
+    <string-array name="arrJugadorInicialEntradas">
+        <item>Jugador 1</item>
+        <item>Jugador 2 (computador)</item>
+        <item>Aleatorio</item>
+    </string-array>
+    <string-array name="arrJugadorInicialValores" translatable="false">
+        <item>J1</item>
+        <item>J2</item>
+        <item>ALEATORIO</item>
+    </string-array>
+
 </resources>
