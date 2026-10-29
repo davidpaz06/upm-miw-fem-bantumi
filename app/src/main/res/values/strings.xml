@@ -27,6 +27,7 @@
     <string name="txtBorrarResultados">Borrar resultados</string>
     <string name="txtBorrarResultadosPregunta">¿Desea eliminar todos los resultados guardados? Esta acción no se puede deshacer.</string>
     <string name="txtSinResultados">Aún no hay resultados guardados</string>
+    <string name="txtFechaDuracion" translatable="false">%1$s · %2$s</string>
     <string name="txtResultadoSemillas" translatable="false">%1$d - %2$d</string>
 
     <!-- Acerca de -->

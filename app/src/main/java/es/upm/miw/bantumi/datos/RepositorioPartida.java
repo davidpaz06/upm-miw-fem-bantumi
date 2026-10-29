@@ -37,7 +37,7 @@ public class RepositorioPartida {
     /**
      * Guarda la partida, sustituyendo la anterior
      *
-     * @param juegoSerializado estado del juego (ver <code>JuegoBantumi.serializa()</code>)
+     * @param juegoSerializado contenido de la partida (ver <code>MainActivity.guardarPartida()</code>)
      * @throws IOException si no se puede escribir el fichero
      */
     public void guardar(@NonNull String juegoSerializado) throws IOException {
@@ -49,7 +49,7 @@ public class RepositorioPartida {
     }
 
     /**
-     * @return estado de la partida guardada, o <code>null</code> si no existe
+     * @return contenido de la partida guardada (una línea por dato), o <code>null</code> si no existe
      * @throws IOException si no se puede leer el fichero
      */
     @Nullable
@@ -57,7 +57,15 @@ public class RepositorioPartida {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                 context.openFileInput(NOMBRE_FICHERO),
                 StandardCharsets.UTF_8))) {
-            return reader.readLine();
+            StringBuilder contenido = new StringBuilder();
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                if (contenido.length() > 0) {
+                    contenido.append("\n");
+                }
+                contenido.append(linea);
+            }
+            return contenido.toString();
         } catch (FileNotFoundException e) {
             return null;
         }

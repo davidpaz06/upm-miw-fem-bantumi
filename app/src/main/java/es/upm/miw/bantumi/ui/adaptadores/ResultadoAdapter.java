@@ -1,5 +1,6 @@
 package es.upm.miw.bantumi.ui.adaptadores;
 
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class ResultadoAdapter extends ListAdapter<Resultado, ResultadoAdapter.Re
             return a.semillasJ1 == b.semillasJ1
                     && a.semillasJ2 == b.semillasJ2
                     && a.fecha == b.fecha
+                    && a.duracionMs == b.duracionMs
                     && a.nombreJugador.equals(b.nombreJugador);
         }
     };
@@ -54,7 +56,10 @@ public class ResultadoAdapter extends ListAdapter<Resultado, ResultadoAdapter.Re
         Resultado resultado = getItem(position);
         holder.tvPosicion.setText(String.valueOf(position + 1));
         holder.tvNombre.setText(resultado.nombreJugador);
-        holder.tvFecha.setText(formatoFecha.format(new Date(resultado.fecha)));
+        holder.tvFecha.setText(holder.itemView.getContext().getString(
+                R.string.txtFechaDuracion,
+                formatoFecha.format(new Date(resultado.fecha)),
+                DateUtils.formatElapsedTime(resultado.duracionMs / 1000)));
         holder.tvSemillas.setText(holder.itemView.getContext().getString(
                 R.string.txtResultadoSemillas, resultado.semillasJ1, resultado.semillasJ2));
     }

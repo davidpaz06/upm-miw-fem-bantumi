@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Resultado.class}, version = 1, exportSchema = false)
+@Database(entities = {Resultado.class}, version = 2, exportSchema = false)
 public abstract class BantumiRoomDatabase extends RoomDatabase {
 
     private static final String NOMBRE_BD = "bantumi.db";
@@ -22,7 +22,7 @@ public abstract class BantumiRoomDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             BantumiRoomDatabase.class,
                             NOMBRE_BD
-                    ).build();
+                    ).fallbackToDestructiveMigration().build();
                 }
             }
         }

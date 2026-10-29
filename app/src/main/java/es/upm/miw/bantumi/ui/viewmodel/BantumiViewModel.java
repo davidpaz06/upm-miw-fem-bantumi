@@ -1,5 +1,7 @@
 package es.upm.miw.bantumi.ui.viewmodel;
 
+import android.os.SystemClock;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -18,6 +20,10 @@ public class BantumiViewModel extends ViewModel {
     // Última casilla elegida por cada jugador (-1 si aún no ha jugado)
     private final MutableLiveData<Integer> ultimaCasillaJ1 = new MutableLiveData<>(-1);
     private final MutableLiveData<Integer> ultimaCasillaJ2 = new MutableLiveData<>(-1);
+
+    // Tiempo de partida: acumulado en tramos ya cerrados + tramo en marcha (0 si está parado)
+    private long tiempoAcumuladoMs = 0;
+    private long inicioTramoMs = 0;
 
     // Indica si la partida actual se ha modificado desde que se inició, guardó o recuperó
     private boolean partidaModificada = false;
@@ -46,6 +52,39 @@ public class BantumiViewModel extends ViewModel {
      */
     public void setTurno(JuegoBantumi.Turno turno) {
         this.turno.setValue(turno);
+    }
+
+    /**
+     * @return tiempo de la partida en milisegundos
+     */
+    public long getTiempoMs() {
+        return tiempoAcumuladoMs
+                + ((inicioTramoMs != 0) ? SystemClock.elapsedRealtime() - inicioTramoMs : 0);
+    }
+
+    public boolean isCronometroEnMarcha() {
+        return inicioTramoMs != 0;
+    }
+
+    public void iniciarTiempo() {
+        if (inicioTramoMs == 0) {
+            inicioTramoMs = SystemClock.elapsedRealtime();
+        }
+    }
+
+    public void pararTiempo() {
+        tiempoAcumuladoMs = getTiempoMs();
+        inicioTramoMs = 0;
+    }
+
+    /**
+     * Para el cronómetro y fija el tiempo de la partida
+     *
+     * @param tiempoMs tiempo en milisegundos
+     */
+    public void reiniciarTiempo(long tiempoMs) {
+        tiempoAcumuladoMs = tiempoMs;
+        inicioTramoMs = 0;
     }
 
     public LiveData<Integer> getUltimaCasillaJ1() {

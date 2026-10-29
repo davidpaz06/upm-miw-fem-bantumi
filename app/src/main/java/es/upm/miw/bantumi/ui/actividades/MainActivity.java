@@ -7,10 +7,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Chronometer;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -72,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         ((TextView) findViewById(R.id.tvPlayer1)).setText(obtenerNombreJugador());
         aplicarColores();
+        if (!juegoBantumi.juegoTerminado()) {
+            bantumiVM.iniciarTiempo();
+        }
+        actualizarCronometro();
         programarJugadaComputador();
     }
 
@@ -79,7 +85,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         // Evita mostrar diálogos (fin de partida) con la actividad en segundo plano
         handler.removeCallbacks(jugadaComputador);
+        bantumiVM.pararTiempo();
+        actualizarCronometro();
         super.onPause();
+    }
+
+    /**
+     * Sincroniza el cronómetro mostrado con el tiempo de la partida
+     */
+    private void actualizarCronometro() {
+        Chronometer cronometro = findViewById(R.id.cronometro);
+        cronometro.setBase(SystemClock.elapsedRealtime() - bantumiVM.getTiempoMs());
+        if (bantumiVM.isCronometroEnMarcha()) {
+            cronometro.start();
+        } else {
+            cronometro.stop();
+        }
     }
 
     /**
@@ -332,6 +353,9 @@ public class MainActivity extends AppCompatActivity {
         juegoBantumi.inicializar(obtenerTurnoInicial());
         bantumiVM.setPartidaModificada(false);
         bantumiVM.setPuntuacionGuardada(false);
+        bantumiVM.reiniciarTiempo(0);
+        bantumiVM.iniciarTiempo();
+        actualizarCronometro();
         programarJugadaComputador();
     }
 
@@ -341,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
     private void guardarPartida() {
         int mensaje;
         try {
-            new RepositorioPartida(this).guardar(juegoBantumi.serializa());
+            new RepositorioPartida(this).guardar(juegoBantumi.serializa() + "\n" + bantumiVM.getTiempoMs());
             bantumiVM.setPartidaModificada(false);
             mensaje = R.string.txtPartidaGuardada;
         } catch (IOException e) {
@@ -375,7 +399,22 @@ public class MainActivity extends AppCompatActivity {
             if (guardada == null) {
                 mensaje = R.string.txtNoHayPartidaGuardada;
             } else {
-                juegoBantumi.deserializa(guardada);
+                // Primera línea: estado del tablero; segunda (opcional): tiempo de partida
+                String[] lineas = guardada.split("\n");
+                juegoBantumi.deserializa(lineas[0]);
+                long tiempoMs = 0;
+                if (lineas.length > 1) {
+                    try {
+                        tiempoMs = Long.parseLong(lineas[1].trim());
+                    } catch (NumberFormatException e) {
+                        Log.w(LOG_TAG, "Tiempo de partida inválido: " + lineas[1]);
+                    }
+                }
+                bantumiVM.reiniciarTiempo(tiempoMs);
+                if (!juegoBantumi.juegoTerminado()) {
+                    bantumiVM.iniciarTiempo();
+                }
+                actualizarCronometro();
                 bantumiVM.setPartidaModificada(false);
                 // Una partida ya terminada se registró cuando acabó
                 bantumiVM.setPuntuacionGuardada(juegoBantumi.juegoTerminado());
@@ -429,7 +468,8 @@ public class MainActivity extends AppCompatActivity {
                 obtenerNombreJugador(),
                 System.currentTimeMillis(),
                 juegoBantumi.getSemillas(6),
-                juegoBantumi.getSemillas(13)
+                juegoBantumi.getSemillas(13),
+                bantumiVM.getTiempoMs()
         ));
         bantumiVM.setPuntuacionGuardada(true);
     }
@@ -438,6 +478,8 @@ public class MainActivity extends AppCompatActivity {
      * El juego ha terminado. Volver a jugar?
      */
     private void finJuego() {
+        bantumiVM.pararTiempo();
+        actualizarCronometro();
         int semillasJ1 = juegoBantumi.getSemillas(6);
         int semillasJ2 = juegoBantumi.getSemillas(13);
         String texto = getString(
