@@ -1,0 +1,62 @@
+BANTUMI - Persistencia (preferencias, ficheros y base de datos Room)
+=====================================================================
+
+Proyecto Android (Java) con Gradle. Compila con "assembleDebug" (comprobado).
+Historial de cambios en Git: un commit pequeño por funcionalidad.
+
+FUNCIONALIDADES OBLIGATORIAS
+----------------------------
+1. Reiniciar: menú "Reiniciar" con diálogo de confirmación.
+2. Guardar partida: se escribe en el almacenamiento interno de la app.
+3. Recuperar partida: si la partida actual se ha modificado desde que se
+   empezó/recuperó, se pide confirmación antes de sustituirla.
+4. Guardar puntuación: al terminar la partida se guarda en Room (nombre del
+   jugador tomado de Ajustes, fecha y hora, semillas de cada almacén).
+   Sólo se guarda una vez por partida.
+5. Mejores resultados: top 10 ordenado por el mayor número de semillas de
+   cualquiera de los dos jugadores (empate: el más reciente primero).
+   Opción de borrar todos los resultados con confirmación.
+
+FORMATO DE LOS FICHEROS DE PARTIDA
+----------------------------------
+Un fichero por partida guardada: partida_{milisegundos}.txt (UTF-8).
+  Línea 1: TURNO;s0,s1,...,s13   (turno: TURNO_J1 o TURNO_J2; 14 casillas)
+  Línea 2: tiempo transcurrido en milisegundos (cronómetro)
+Al recuperar se valida el contenido (turno, 14 valores, no negativos); si es
+inválido se muestra un error y la partida actual no se toca.
+
+BASE DE DATOS (Room)
+--------------------
+Tabla Resultado: id, nombreJugador, fecha, semillasJ1, semillasJ2, duracionMs.
+Versión 2. Al añadir duracionMs se usa fallbackToDestructiveMigration(), por
+lo que una instalación anterior pierde sus resultados guardados (app sin
+publicar). Las escrituras se hacen en un hilo en segundo plano.
+
+FUNCIONALIDADES OPCIONALES IMPLEMENTADAS
+----------------------------------------
+- Semillas iniciales por casilla (2 a 8, por defecto 4) en Ajustes.
+- Jugador que empieza: jugador, computador o aleatorio.
+- Colores del turno y de los almacenes en Ajustes.
+- Borde en la última casilla elegida por cada jugador.
+- Cronómetro de partida; la duración se guarda y se muestra en resultados.
+- Filtro de mejores resultados por jugador y por mínimo de semillas.
+- Varias partidas guardadas, con lista para elegir cuál recuperar.
+
+DECISIONES Y ACLARACIONES
+-------------------------
+- El computador juega solo, con una pausa de 800 ms, cuando le toca (antes
+  movía al pulsar el usuario una casilla). Se pausa con la app en segundo plano.
+- El ganador se decide comparando los dos almacenes (no depende de las
+  semillas iniciales, por lo que vale para partidas recuperadas).
+- Los cambios en Ajustes (semillas iniciales, jugador inicial) se aplican al
+  reiniciar la partida; los colores al volver a la pantalla de juego.
+- Cada guardado crea un fichero nuevo; no hay límite ni opción de borrarlos.
+- Si el nombre del jugador está vacío se usa "Jugador 1".
+
+LIMITACIONES CONOCIDAS
+----------------------
+- El Gradle wrapper incluido está dañado (gradle-wrapper.jar): compilar desde
+  Android Studio o con un Gradle 9.8.1 instalado. Se compiló con éxito así.
+- No se ha probado en emulador/dispositivo: rotación de pantalla, aspecto de
+  los bordes de casilla y cronómetro quedan sin verificar manualmente.
+- gradle/gradle-daemon-jvm.properties no se incluye en el control de versiones.
