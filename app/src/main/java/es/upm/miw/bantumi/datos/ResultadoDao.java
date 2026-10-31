@@ -13,12 +13,6 @@ public interface ResultadoDao {
     @Insert
     void insertar(Resultado resultado);
 
-    /**
-     * @param nombre nombre (o parte) del jugador, sin distinguir mayúsculas; vacío para todos
-     * @param minSemillas mínimo de semillas obtenido por cualquiera de los dos jugadores
-     * @return los diez mejores resultados que cumplen el filtro, ordenados por el mayor
-     * número de semillas obtenido por cualquiera de los dos jugadores
-     */
     @Query("SELECT * FROM resultados"
             + " WHERE instr(lower(nombreJugador), lower(:nombre)) > 0"
             + " AND MAX(semillasJ1, semillasJ2) >= :minSemillas"

@@ -27,19 +27,10 @@ public class ResultadosViewModel extends AndroidViewModel {
         aplicarFiltro(filtroNombre, filtroMinSemillas);
     }
 
-    /**
-     * @return los diez mejores resultados que cumplen el filtro, actualizados automáticamente
-     */
     public LiveData<List<Resultado>> getMejoresResultados() {
         return mejoresResultados;
     }
 
-    /**
-     * Filtra los mejores resultados
-     *
-     * @param nombre nombre (o parte del nombre) del jugador; vacío para no filtrar por jugador
-     * @param minSemillas mínimo de semillas en el almacén ganador; 0 para no filtrar por semillas
-     */
     public void aplicarFiltro(@NonNull String nombre, int minSemillas) {
         filtroNombre = nombre.trim();
         filtroMinSemillas = Math.max(minSemillas, 0);
@@ -62,9 +53,6 @@ public class ResultadosViewModel extends AndroidViewModel {
         return !filtroNombre.isEmpty() || filtroMinSemillas > 0;
     }
 
-    /**
-     * Elimina todos los resultados guardados
-     */
     public void borrarTodos() {
         repositorio.borrarTodos();
     }

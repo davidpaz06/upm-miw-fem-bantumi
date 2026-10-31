@@ -16,9 +16,6 @@ import es.upm.miw.bantumi.datos.RepositorioPartida;
 import es.upm.miw.bantumi.datos.RepositorioPartida.PartidaGuardada;
 import es.upm.miw.bantumi.ui.actividades.MainActivity;
 
-/**
- * Lista las partidas guardadas para que el usuario elija cuál recuperar
- */
 public class SeleccionarPartidaDialog extends DialogFragment {
 
     @NonNull

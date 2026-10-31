@@ -22,9 +22,6 @@ import es.upm.miw.bantumi.ui.fragmentos.BorrarResultadosAlertDialog;
 import es.upm.miw.bantumi.ui.fragmentos.FiltroResultadosDialog;
 import es.upm.miw.bantumi.ui.viewmodel.ResultadosViewModel;
 
-/**
- * Muestra los diez mejores resultados
- */
 public class MejoresResultadosActivity extends AppCompatActivity {
 
     private ResultadosViewModel resultadosVM;
@@ -75,26 +72,16 @@ public class MejoresResultadosActivity extends AppCompatActivity {
         return resultadosVM.getFiltroMinSemillas();
     }
 
-    /**
-     * Filtra la lista por jugador y por mínimo de semillas
-     *
-     * @param nombre nombre (o parte) del jugador; vacío para todos
-     * @param minSemillas mínimo de semillas tecleado; vacío o inválido para no limitar
-     */
     public void aplicarFiltro(String nombre, String minSemillas) {
         int minimo = 0;
         try {
             minimo = Integer.parseInt(minSemillas.trim());
         } catch (NumberFormatException e) {
-            // Sin límite
         }
         resultadosVM.aplicarFiltro(nombre, minimo);
         actualizarSubtitulo();
     }
 
-    /**
-     * Muestra en la barra el filtro activo, si lo hay
-     */
     private void actualizarSubtitulo() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) {
@@ -117,9 +104,6 @@ public class MejoresResultadosActivity extends AppCompatActivity {
         actionBar.setSubtitle(getString(R.string.txtFiltroActivo, filtro));
     }
 
-    /**
-     * Elimina todos los resultados (la lista se actualiza sola al observar la base de datos)
-     */
     public void borrarResultados() {
         resultadosVM.borrarTodos();
     }

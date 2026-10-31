@@ -10,9 +10,6 @@ import androidx.fragment.app.DialogFragment;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.ui.actividades.MainActivity;
 
-/**
- * Diálogo de confirmación para reiniciar la partida actual
- */
 public class ReiniciarAlertDialog extends DialogFragment {
 
     @NonNull

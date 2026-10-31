@@ -84,16 +84,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        // Evita mostrar diálogos (fin de partida) con la actividad en segundo plano
         handler.removeCallbacks(jugadaComputador);
         bantumiVM.pararTiempo();
         actualizarCronometro();
         super.onPause();
     }
 
-    /**
-     * Sincroniza el cronómetro mostrado con el tiempo de la partida
-     */
     private void actualizarCronometro() {
         Chronometer cronometro = findViewById(R.id.cronometro);
         cronometro.setBase(SystemClock.elapsedRealtime() - bantumiVM.getTiempoMs());
@@ -104,9 +100,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * @return nombre del jugador configurado en los ajustes
-     */
     public String obtenerNombreJugador() {
         String nombre = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(getString(R.string.prefKeyNombreJugador), null);
@@ -115,16 +108,10 @@ public class MainActivity extends AppCompatActivity {
                 : nombre.trim();
     }
 
-    /**
-     * @return color de resaltado del turno configurado en los ajustes
-     */
     private int obtenerColorTurno() {
         return obtenerColor(R.string.prefKeyColorTurno, "#33B5E5");
     }
 
-    /**
-     * Aplica los colores de los ajustes (se llama al volver de la pantalla de ajustes)
-     */
     private void aplicarColores() {
         int colorAlmacen = obtenerColor(R.string.prefKeyColorAlmacen, "#018786");
         ((TextView) findViewById(R.id.casilla_06)).setTextColor(colorAlmacen);
@@ -143,9 +130,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * @return número de semillas por casilla configurado en los ajustes
-     */
     private int obtenerNumInicialSemillas() {
         int porDefecto = getResources().getInteger(R.integer.intNumInicialSemillas);
         String valor = PreferenceManager.getDefaultSharedPreferences(this)
@@ -157,9 +141,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * @return turno con el que empieza una partida, según los ajustes
-     */
     private JuegoBantumi.Turno obtenerTurnoInicial() {
         String valor = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(getString(R.string.prefKeyJugadorInicial), "J1");
@@ -169,9 +150,6 @@ public class MainActivity extends AppCompatActivity {
         return "J2".equals(valor) ? JuegoBantumi.Turno.turnoJ2 : JuegoBantumi.Turno.turnoJ1;
     }
 
-    /**
-     * Si es el turno del computador, programa su jugada tras una breve pausa
-     */
     private void programarJugadaComputador() {
         handler.removeCallbacks(jugadaComputador);
         if (juegoBantumi.turnoActual() == JuegoBantumi.Turno.turnoJ2) {
@@ -179,9 +157,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Realiza la jugada del computador (y las que encadene si repite turno)
-     */
     private void juegaComputador() {
         if (juegoBantumi.turnoActual() != JuegoBantumi.Turno.turnoJ2) {
             return;
@@ -192,12 +167,6 @@ public class MainActivity extends AppCompatActivity {
         trasJugada(estadoAnterior);
     }
 
-    /**
-     * Actualiza el estado de la partida tras una jugada: la marca como modificada,
-     * comprueba si ha terminado y, si no, da paso al computador cuando le toque.
-     *
-     * @param estadoAnterior estado serializado antes de la jugada
-     */
     private void trasJugada(String estadoAnterior) {
         if (!estadoAnterior.equals(juegoBantumi.serializa())) {
             bantumiVM.setPartidaModificada(true);
@@ -234,20 +203,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-        bantumiVM.getUltimaCasillaJ1().observe(this, pos -> marcarCasillas());   // Casillas elegidas
+        bantumiVM.getUltimaCasillaJ1().observe(this, pos -> marcarCasillas());
         bantumiVM.getUltimaCasillaJ2().observe(this, pos -> marcarCasillas());
     }
 
-    /**
-     * Resalta con un borde la última casilla elegida por cada jugador
-     */
     private void marcarCasillas() {
         int marcaJ1 = bantumiVM.getUltimaCasillaJ1().getValue();
         int marcaJ2 = bantumiVM.getUltimaCasillaJ2().getValue();
         int grosor = (int) (3 * getResources().getDisplayMetrics().density);
         ColorStateList color = ColorStateList.valueOf(obtenerColorTurno());
         for (int pos = 0; pos < JuegoBantumi.NUM_POSICIONES; pos++) {
-            if (pos == 6 || pos == 13) {    // Almacenes
+            if (pos == 6 || pos == 13) {
                 continue;
             }
             View casilla = findViewById(idCasilla(pos));
@@ -259,10 +225,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * @param pos posición del tablero
-     * @return identificador de la vista de la posición (<code>casilla_XX</code>), o 0 si no existe
-     */
     private int idCasilla(int pos) {
         String num2digitos = String.format(Locale.getDefault(), "%02d", pos);
         return getResources().getIdentifier("casilla_" + num2digitos, "id", getPackageName());
@@ -345,10 +307,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Inicia una nueva partida con el número de semillas y el jugador inicial
-     * de los ajustes, y la marca como no modificada
-     */
     public void reiniciarPartida() {
         juegoBantumi.setNumInicialSemillas(obtenerNumInicialSemillas());
         juegoBantumi.inicializar(obtenerTurnoInicial());
@@ -360,9 +318,6 @@ public class MainActivity extends AppCompatActivity {
         programarJugadaComputador();
     }
 
-    /**
-     * Guarda el estado actual del tablero en el fichero de partida
-     */
     private void guardarPartida() {
         int mensaje;
         try {
@@ -376,9 +331,6 @@ public class MainActivity extends AppCompatActivity {
         Snackbar.make(findViewById(android.R.id.content), getString(mensaje), Snackbar.LENGTH_LONG).show();
     }
 
-    /**
-     * Muestra la lista de partidas guardadas para elegir cuál recuperar
-     */
     private void mostrarPartidasGuardadas() {
         if (!new RepositorioPartida(this).existe()) {
             mostrarMensaje(R.string.txtNoHayPartidaGuardada);
@@ -387,12 +339,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Recupera la partida elegida. Si la partida actual se ha modificado,
-     * pide confirmación antes de sustituirla.
-     *
-     * @param nombreFichero fichero de la partida elegida
-     */
     public void seleccionarPartida(String nombreFichero) {
         if (bantumiVM.isPartidaModificada()) {
             RecuperarAlertDialog.newInstance(nombreFichero).show(getSupportFragmentManager(), "RECUPERAR_DIALOG");
@@ -401,11 +347,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Sustituye la partida actual por la guardada en el fichero
-     *
-     * @param nombreFichero fichero de la partida a recuperar
-     */
     public void recuperarPartida(String nombreFichero) {
         int mensaje;
         try {
@@ -413,7 +354,6 @@ public class MainActivity extends AppCompatActivity {
             if (guardada == null) {
                 mensaje = R.string.txtNoHayPartidaGuardada;
             } else {
-                // Primera línea: estado del tablero; segunda (opcional): tiempo de partida
                 String[] lineas = guardada.split("\n");
                 juegoBantumi.deserializa(lineas[0]);
                 long tiempoMs = 0;
@@ -430,7 +370,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 actualizarCronometro();
                 bantumiVM.setPartidaModificada(false);
-                // Una partida ya terminada se registró cuando acabó
                 bantumiVM.setPuntuacionGuardada(juegoBantumi.juegoTerminado());
                 programarJugadaComputador();
                 mensaje = R.string.txtPartidaRecuperada;
@@ -463,7 +402,6 @@ public class MainActivity extends AppCompatActivity {
                 trasJugada(estadoAnterior);
                 break;
             case turnoJ2:
-                // Turno del computador: adelanta su jugada, que ya estaba programada
                 juegaComputador();
                 break;
             default:    // JUEGO TERMINADO
@@ -471,9 +409,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Guarda en la base de datos el resultado de la partida terminada (una sola vez por partida)
-     */
     private void guardarPuntuacion() {
         if (bantumiVM.isPuntuacionGuardada()) {
             return;

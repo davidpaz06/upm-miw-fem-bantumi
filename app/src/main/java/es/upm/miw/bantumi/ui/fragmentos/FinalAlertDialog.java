@@ -15,12 +15,6 @@ public class FinalAlertDialog extends DialogFragment {
 
     private static final String ARG_TITULO = "titulo";
 
-    /**
-     * Crea el diálogo guardando el título en los argumentos del fragmento,
-     * de modo que sobreviva a su recreación por el sistema (p.ej. al rotar).
-     *
-     * @param titulo título del diálogo
-     */
     public static FinalAlertDialog newInstance(String titulo) {
         FinalAlertDialog dialog = new FinalAlertDialog();
         Bundle args = new Bundle();

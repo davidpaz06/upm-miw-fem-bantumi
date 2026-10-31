@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Número inicial de semillas por casilla -->
     <string-array name="arrNumSemillas" translatable="false">
         <item>2</item>
         <item>3</item>
@@ -12,7 +11,6 @@
         <item>8</item>
     </string-array>
 
-    <!-- Jugador que realiza el primer movimiento -->
     <string-array name="arrJugadorInicialEntradas">
         <item>Jugador 1</item>
         <item>Jugador 2 (computador)</item>
@@ -24,7 +22,6 @@
         <item>ALEATORIO</item>
     </string-array>
 
-    <!-- Color de resaltado del turno -->
     <string-array name="arrColorTurnoEntradas">
         <item>Azul</item>
         <item>Verde</item>
@@ -40,7 +37,6 @@
         <item>#8E24AA</item>
     </string-array>
 
-    <!-- Color de las semillas de los almacenes -->
     <string-array name="arrColorAlmacenEntradas">
         <item>Turquesa</item>
         <item>Azul</item>

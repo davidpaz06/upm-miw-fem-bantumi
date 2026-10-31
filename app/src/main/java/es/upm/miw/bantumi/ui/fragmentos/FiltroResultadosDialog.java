@@ -13,9 +13,6 @@ import androidx.fragment.app.DialogFragment;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.ui.actividades.MejoresResultadosActivity;
 
-/**
- * Diálogo para filtrar los mejores resultados por jugador y por número de semillas
- */
 public class FiltroResultadosDialog extends DialogFragment {
 
     @NonNull
@@ -26,7 +23,7 @@ public class FiltroResultadosDialog extends DialogFragment {
         View vista = LayoutInflater.from(activity).inflate(R.layout.dialog_filtro_resultados, null);
         final EditText etNombre = vista.findViewById(R.id.etFiltroNombre);
         final EditText etSemillas = vista.findViewById(R.id.etFiltroSemillas);
-        if (savedInstanceState == null) {   // Si se recrea, el sistema restaura lo tecleado
+        if (savedInstanceState == null) {
             etNombre.setText(activity.getFiltroNombre());
             if (activity.getFiltroMinSemillas() > 0) {
                 etSemillas.setText(String.valueOf(activity.getFiltroMinSemillas()));

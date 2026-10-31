@@ -17,9 +17,6 @@ import java.util.Date;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.datos.Resultado;
 
-/**
- * Muestra el listado de resultados
- */
 public class ResultadoAdapter extends ListAdapter<Resultado, ResultadoAdapter.ResultadoViewHolder> {
 
     private static final DiffUtil.ItemCallback<Resultado> DIFF = new DiffUtil.ItemCallback<Resultado>() {

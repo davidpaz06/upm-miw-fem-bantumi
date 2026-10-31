@@ -10,17 +10,10 @@ import androidx.fragment.app.DialogFragment;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.ui.actividades.MainActivity;
 
-/**
- * Diálogo de confirmación para recuperar una partida guardada cuando
- * la partida actual se ha modificado
- */
 public class RecuperarAlertDialog extends DialogFragment {
 
     private static final String ARG_FICHERO = "fichero";
 
-    /**
-     * @param nombreFichero fichero de la partida que se recuperará si el usuario confirma
-     */
     public static RecuperarAlertDialog newInstance(String nombreFichero) {
         RecuperarAlertDialog dialog = new RecuperarAlertDialog();
         Bundle args = new Bundle();

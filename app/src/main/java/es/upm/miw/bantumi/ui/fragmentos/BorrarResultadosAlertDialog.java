@@ -10,9 +10,6 @@ import androidx.fragment.app.DialogFragment;
 import es.upm.miw.bantumi.R;
 import es.upm.miw.bantumi.ui.actividades.MejoresResultadosActivity;
 
-/**
- * Diálogo de confirmación para eliminar todos los resultados guardados
- */
 public class BorrarResultadosAlertDialog extends DialogFragment {
 
     @NonNull

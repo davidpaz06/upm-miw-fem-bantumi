@@ -17,21 +17,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Persiste las partidas guardadas, un fichero por partida, en el almacenamiento
- * interno de la app (<code>partida_{milisegundos}.txt</code>)
- */
 public class RepositorioPartida {
 
     private static final String PREFIJO = "partida_";
     private static final String SUFIJO = ".txt";
 
-    /**
-     * Resumen de una partida guardada
-     */
     public static class PartidaGuardada {
         public final String nombreFichero;
-        /** Fecha y hora en que se guardó (milisegundos desde epoch) */
         public final long fecha;
         public final int semillasJ1;
         public final int semillasJ2;
@@ -50,19 +42,10 @@ public class RepositorioPartida {
         this.context = context.getApplicationContext();
     }
 
-    /**
-     * @return <code>true</code> si hay alguna partida guardada
-     */
     public boolean existe() {
         return !nombresFicheros().isEmpty();
     }
 
-    /**
-     * Guarda la partida en un fichero nuevo
-     *
-     * @param juegoSerializado contenido de la partida (ver <code>MainActivity.guardarPartida()</code>)
-     * @throws IOException si no se puede escribir el fichero
-     */
     public void guardar(@NonNull String juegoSerializado) throws IOException {
         String nombre = PREFIJO + System.currentTimeMillis() + SUFIJO;
         try (Writer writer = new OutputStreamWriter(
@@ -72,9 +55,6 @@ public class RepositorioPartida {
         }
     }
 
-    /**
-     * @return las partidas guardadas, de la más reciente a la más antigua
-     */
     @NonNull
     public List<PartidaGuardada> listar() {
         List<PartidaGuardada> partidas = new ArrayList<>();
@@ -88,7 +68,6 @@ public class RepositorioPartida {
                 semillasJ1 = Integer.parseInt(valores[6]);
                 semillasJ2 = Integer.parseInt(valores[13]);
             } catch (IOException | RuntimeException e) {
-                // Fichero ilegible: se lista igualmente; fallará al recuperarlo
             }
             partidas.add(new PartidaGuardada(nombre, fecha, semillasJ1, semillasJ2));
         }
@@ -96,11 +75,6 @@ public class RepositorioPartida {
         return partidas;
     }
 
-    /**
-     * @param nombreFichero fichero de la partida (ver {@link PartidaGuardada#nombreFichero})
-     * @return contenido de la partida guardada (una línea por dato), o <code>null</code> si no existe
-     * @throws IOException si no se puede leer el fichero
-     */
     @Nullable
     public String cargar(@NonNull String nombreFichero) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(

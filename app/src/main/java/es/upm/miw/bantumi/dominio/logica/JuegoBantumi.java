@@ -12,7 +12,6 @@ public class JuegoBantumi {
     // Posiciones 7-12: campo jugador 2
     // Posición 13: depósito jugador 2
 
-    // Formato serializado: TURNO;s0,s1,...,s13
     private static final String SEPARADOR_TURNO = ";";
     private static final String SEPARADOR_SEMILLAS = ",";
 
@@ -41,12 +40,6 @@ public class JuegoBantumi {
         }
     }
 
-    /**
-     * Establece el número de semillas por casilla que se usará en el siguiente
-     * {@link #inicializar(Turno)}
-     *
-     * @param numInicialSemillas Número de semillas al inicio del juego
-     */
     public void setNumInicialSemillas(int numInicialSemillas) {
         this.numInicialSemillas = numInicialSemillas;
     }
@@ -230,11 +223,9 @@ public class JuegoBantumi {
     }
 
     /**
-     * Recupera el estado del juego a partir de su representación.
-     * Si la cadena no es válida no se modifica el estado actual.
+     * Recupera el estado del juego a partir de su representación
      *
      * @param juegoSerializado cadena que representa el estado completo del juego
-     * @throws IllegalArgumentException si la cadena no tiene el formato esperado
      */
     public void deserializa(String juegoSerializado) {
         if (juegoSerializado == null)
@@ -259,7 +250,6 @@ public class JuegoBantumi {
             throw new IllegalArgumentException("Número de semillas incorrecto", e);
         }
 
-        // Todo validado: se aplica el estado
         bantumiVM.reiniciarUltimasCasillas();
         for (int i = 0; i < NUM_POSICIONES; i++)
             setSemillas(i, semillas[i]);

@@ -14,9 +14,6 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import es.upm.miw.bantumi.R;
 
-/**
- * Pantalla de ajustes del juego
- */
 public class BantumiPrefs extends AppCompatActivity {
 
     @Override

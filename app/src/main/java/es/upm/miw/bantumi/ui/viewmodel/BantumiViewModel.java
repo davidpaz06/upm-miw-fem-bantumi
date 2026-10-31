@@ -17,18 +17,14 @@ public class BantumiViewModel extends ViewModel {
 
     private MutableLiveData<JuegoBantumi.Turno> turno;
 
-    // Última casilla elegida por cada jugador (-1 si aún no ha jugado)
     private final MutableLiveData<Integer> ultimaCasillaJ1 = new MutableLiveData<>(-1);
     private final MutableLiveData<Integer> ultimaCasillaJ2 = new MutableLiveData<>(-1);
 
-    // Tiempo de partida: acumulado en tramos ya cerrados + tramo en marcha (0 si está parado)
     private long tiempoAcumuladoMs = 0;
     private long inicioTramoMs = 0;
 
-    // Indica si la partida actual se ha modificado desde que se inició, guardó o recuperó
     private boolean partidaModificada = false;
 
-    // Indica si el resultado de la partida terminada ya se ha guardado (evita duplicados)
     private boolean puntuacionGuardada = false;
 
     public BantumiViewModel() {
@@ -54,9 +50,6 @@ public class BantumiViewModel extends ViewModel {
         this.turno.setValue(turno);
     }
 
-    /**
-     * @return tiempo de la partida en milisegundos
-     */
     public long getTiempoMs() {
         return tiempoAcumuladoMs
                 + ((inicioTramoMs != 0) ? SystemClock.elapsedRealtime() - inicioTramoMs : 0);
@@ -77,11 +70,6 @@ public class BantumiViewModel extends ViewModel {
         inicioTramoMs = 0;
     }
 
-    /**
-     * Para el cronómetro y fija el tiempo de la partida
-     *
-     * @param tiempoMs tiempo en milisegundos
-     */
     public void reiniciarTiempo(long tiempoMs) {
         tiempoAcumuladoMs = tiempoMs;
         inicioTramoMs = 0;
@@ -95,12 +83,6 @@ public class BantumiViewModel extends ViewModel {
         return ultimaCasillaJ2;
     }
 
-    /**
-     * Registra la casilla elegida por el jugador al que corresponde <i>turno</i>
-     *
-     * @param turno turno (jugador) que ha elegido la casilla
-     * @param pos casilla elegida
-     */
     public void setUltimaCasilla(JuegoBantumi.Turno turno, int pos) {
         if (turno == JuegoBantumi.Turno.turnoJ1) {
             ultimaCasillaJ1.setValue(pos);
@@ -109,17 +91,11 @@ public class BantumiViewModel extends ViewModel {
         }
     }
 
-    /**
-     * Olvida las casillas elegidas (nueva partida o partida recuperada)
-     */
     public void reiniciarUltimasCasillas() {
         ultimaCasillaJ1.setValue(-1);
         ultimaCasillaJ2.setValue(-1);
     }
 
-    /**
-     * @return <code>true</code> si la partida se ha modificado desde que se inició, guardó o recuperó
-     */
     public boolean isPartidaModificada() {
         return partidaModificada;
     }
