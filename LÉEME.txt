@@ -2,7 +2,6 @@ BANTUMI - Persistencia (preferencias, ficheros y base de datos Room)
 =====================================================================
 
 Proyecto Android (Java) con Gradle. Compila con "assembleDebug" (comprobado).
-Historial de cambios en Git: un commit pequeño por funcionalidad.
 
 FUNCIONALIDADES OBLIGATORIAS
 ----------------------------
@@ -52,11 +51,3 @@ DECISIONES Y ACLARACIONES
   reiniciar la partida; los colores al volver a la pantalla de juego.
 - Cada guardado crea un fichero nuevo; no hay límite ni opción de borrarlos.
 - Si el nombre del jugador está vacío se usa "Jugador 1".
-
-LIMITACIONES CONOCIDAS
-----------------------
-- El Gradle wrapper incluido está dañado (gradle-wrapper.jar): compilar desde
-  Android Studio o con un Gradle 9.8.1 instalado. Se compiló con éxito así.
-- No se ha probado en emulador/dispositivo: rotación de pantalla, aspecto de
-  los bordes de casilla y cronómetro quedan sin verificar manualmente.
-- gradle/gradle-daemon-jvm.properties no se incluye en el control de versiones.
